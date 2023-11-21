@@ -7,6 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class UserHandler  extends Handler {
+
+
+
+    //handle
     /**
      * The only valid GET-mapping for this handler is /users
      */
@@ -24,6 +28,10 @@ public class UserHandler  extends Handler {
 
     @Override
     protected void handlePost(HttpExchange httpExchange, JSONObject JSONin, HandlerResponse response) {
+        System.out.println("Received POST request");
+        //print out the body of the request
+        System.out.println(JSONin.toString());
+
         String mapping = httpExchange.getRequestURI().toString(); // For this handler, will begin with "/user"
 
         // Read various strings that may be present (depending on the mapping)
@@ -84,16 +92,21 @@ public class UserHandler  extends Handler {
     }
 
     private void loginUser(String username, String password, HandlerResponse response) throws Exception {
+        System.out.println("Attempting login");
         if (username.length() < 3 && password.length() < 3) {
+            System.out.println("Invalid username");
             throw new Exception("Invalid username or password");
         } else {
             Account account = Account.exists(username);
             if (account == null || !account.checkPassword(password)) {
+                System.out.println("Invalid password");
                 throw new Exception("Invalid username or password");
             } else {
+                System.out.println("Login successful, generating token");
                 String token = Account.getToken();
                 Client.add(username, token);
                 response.jsonOut.put("token", token);
+                System.out.println(response.jsonOut.put("token", token));
             }
         }
     }

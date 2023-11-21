@@ -43,6 +43,7 @@ public class Server {
 
 			// Start the server
 			server.start();
+			System.out.println("Server started on https://localhost:" + port + "/");
 		} catch (IOException e) {
 			logger.info(e.toString());
 		}
