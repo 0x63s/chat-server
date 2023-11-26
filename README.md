@@ -1,6 +1,6 @@
 # Chat Server
 
-Application's front-end on one domain had to connect with a back-end server on a different domain or port. Without proper handling, this led to cross-origin request blocks and functionality problems for users.
+Application's front-end on one domain had to connect with a back-end server on a different domain or port. Without proper handling, this led to cross-origin request blocks and functionality problems for users. this is why we had to modify the server's code in order to enable CORS requests.
 
 ## Documentation
 
