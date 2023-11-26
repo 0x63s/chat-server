@@ -1,6 +1,6 @@
 # Chat Server
 
-This project is an implementation of a simple chat server, using a RESTful protocol with JSON. It is the basis for possible student projects.
+Application's front-end on one domain had to connect with a back-end server on a different domain or port. Without proper handling, this led to cross-origin request blocks and functionality problems for users.
 
 ## Documentation
 
