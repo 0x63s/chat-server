@@ -5,7 +5,9 @@ import org.json.JSONObject;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -23,9 +25,32 @@ public class Client {
 	private final List<Message> messages = new ArrayList<>();
 	private Instant lastUsage = Instant.now();
 
+
+
+
+	private List<String> chatrooms = new ArrayList<>();
+	private final List<MessageChatroom> chatroomMessages = new ArrayList<>();
+	record MessageChatroom (String chatroom, String username, String message) {
+	}
+	private boolean hasJoinedChatroom = false;
+	public void sendChatroomMessage(String chatroom, String username, String message) {
+		synchronized (chatroomMessages) {
+			chatroomMessages.add(new MessageChatroom(chatroom, username, message));
+		}
+	}
+
+
+
+
+
 	// Messages pending for this user. Chatroom is null for direct messages
 	// from a user. The username is the sending user. The message is obvious.
-	private record Message(String username, String message) {}
+	record Message(String username, String message) {
+	}
+
+
+	record Chatroom(String name, String creator) {
+	}
 
 	/**
 	 * Add a new client to our list of active clients.
@@ -76,7 +101,7 @@ public class Client {
 		synchronized (clients) {
 			Instant expiry = Instant.now().minusSeconds(3600); // Expiry one hour
 			logger.fine("Cleanup clients: " + clients.size() + " clients registered");
-			clients.removeIf( c -> c.lastUsage.isBefore(expiry));
+			clients.removeIf(c -> c.lastUsage.isBefore(expiry));
 			logger.fine("Cleanup clients: " + clients.size() + " clients registered");
 		}
 	}
@@ -85,7 +110,7 @@ public class Client {
 	 * Return a list of all clients
 	 */
 	public static List<String> listClients() {
-		return clients.stream().map( c -> c.username ).collect(Collectors.toList());
+		return clients.stream().map(c -> c.username).collect(Collectors.toList());
 	}
 
 	/**
@@ -126,18 +151,51 @@ public class Client {
 	/**
 	 * Retrieve messages for this client
 	 */
-	public JSONArray getMessages() {
-		JSONArray jsonMessages = new JSONArray();
-		synchronized (messages) {
-			for (Message msg : messages) {
-				JSONObject jsonMsg = (new JSONObject())
-						.put("username", msg.username)
-						.put("message", msg.message);
-				jsonMessages.put(jsonMsg);
+	public JSONObject getMessages() {
+		JSONObject allMessages = new JSONObject();
+		JSONArray jsonDirectMessages = new JSONArray();
+		JSONArray jsonChatroomMessages = new JSONArray();
+
+		synchronized (chatroomMessages) {
+			for (MessageChatroom msg : chatroomMessages) {
+				if (msg.chatroom() == null || msg.chatroom().isEmpty()) {
+					// Direct messages: ["username", "message"]
+					JSONArray directMessage = new JSONArray();
+					directMessage.put(msg.username());
+					directMessage.put(msg.message());
+					jsonDirectMessages.put(directMessage);
+				} else {
+					// Chatroom messages: ["chatroom", "username", "message"]
+					JSONArray chatroomMessage = new JSONArray();
+					chatroomMessage.put(msg.chatroom());
+					chatroomMessage.put(msg.username());
+					chatroomMessage.put(msg.message());
+					jsonChatroomMessages.put(chatroomMessage);
+				}
 			}
-			messages.clear();
+			chatroomMessages.clear();
 		}
+
+		allMessages.put("messages", jsonDirectMessages);
+		allMessages.put("chatrooms", jsonChatroomMessages);
 		updateLastUsage();
-		return jsonMessages;
+		return allMessages;
+	}
+
+
+	public void addChatroom(String chatroom) {
+		chatrooms.add(chatroom);
+	}
+
+	public void removeChatroom(String chatroom) {
+		chatrooms.remove(chatroom);
+	}
+
+	public boolean isInChatroom(String chatroom) {
+		return chatrooms.contains(chatroom);
+	}
+
+	public boolean isInAnyChatroom() {
+		return !chatrooms.isEmpty();
 	}
 }

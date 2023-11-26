@@ -6,8 +6,7 @@ import org.json.JSONObject;
 
 public class PingHandler extends Handler {
     @Override
-    protected void handleGet(HttpExchange httpExchange, HandlerResponse response) {
-        response.statusCode = 200;
+    protected void handleGet(HttpExchange httpExchange, HandlerResponse response) {response.statusCode = 200;
         response.jsonOut.put("ping", true);
     }
 
