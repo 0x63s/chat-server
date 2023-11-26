@@ -9,6 +9,9 @@ public class Chatroom {
     private String name;
     private String creator;
     private Set<String> members;
+
+    public static final List<Chatroom> chatrooms = new ArrayList<>();
+
     //private final List<Message> messages = new ArrayList<>();
 
     //record Message(String username, String message) {
@@ -57,5 +60,37 @@ public class Chatroom {
 //    public boolean isMemberOrCreator(String username) {
 //        return isCreator(username) || isMember(username);
 //    }
+
+    public static boolean exists(String name) {
+        synchronized (chatrooms) {
+            for (Chatroom chatroom : chatrooms) {
+                if (chatroom.name.equals(name)) return true;
+            }
+        }
+        return false;
+    }
+
+    public static List<String> listChatrooms() {
+        synchronized (chatrooms) {
+            return chatrooms.stream().map( a -> a.name ).collect(java.util.stream.Collectors.toList());
+        }
+    }
+
+    public static Chatroom get(String name) {
+        synchronized (chatrooms) {
+            for (Chatroom chatroom : chatrooms) {
+                if (chatroom.name.equals(name)) return chatroom;
+            }
+        }
+        return null;
+    }
+
+    public static void add(Chatroom chatroom) {
+        synchronized (chatrooms) {
+            chatrooms.add(chatroom);
+        }
+    }
+
+
 
 }

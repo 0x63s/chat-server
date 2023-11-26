@@ -25,10 +25,7 @@ public class Client {
 	private final List<Message> messages = new ArrayList<>();
 	private Instant lastUsage = Instant.now();
 
-
-
-
-	private List<String> chatrooms = new ArrayList<>();
+	private final List<String> chatrooms = new ArrayList<>();
 	private final List<MessageChatroom> chatroomMessages = new ArrayList<>();
 	record MessageChatroom (String chatroom, String username, String message) {
 	}
@@ -46,10 +43,6 @@ public class Client {
 	// Messages pending for this user. Chatroom is null for direct messages
 	// from a user. The username is the sending user. The message is obvious.
 	record Message(String username, String message) {
-	}
-
-
-	record Chatroom(String name, String creator) {
 	}
 
 	/**
@@ -198,4 +191,16 @@ public class Client {
 	public boolean isInAnyChatroom() {
 		return !chatrooms.isEmpty();
 	}
+
+
+	public void joinChatroom(String chatroom) {
+		chatrooms.add(chatroom);
+		hasJoinedChatroom = true;
+	}
+
+	public void leaveChatroom(String chatroom) {
+		chatrooms.remove(chatroom);
+		hasJoinedChatroom = false;
+	}
+
 }

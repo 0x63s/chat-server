@@ -1,3 +1,7 @@
 Manifest-Version: 1.0
-Main-Class: chatroom.server.Server
+Main-Class: 
+Class-Path: json-20230618.jar javafx-controls-17.0.2.jar javafx-base-17.
+ 0.2-mac-aarch64.jar javafx-base-17.0.2.jar javafx-fxml-17.0.2.jar javaf
+ x-controls-17.0.2-mac-aarch64.jar javafx-graphics-17.0.2.jar javafx-gra
+ phics-17.0.2-mac-aarch64.jar javafx-fxml-17.0.2-mac-aarch64.jar
 
