@@ -144,36 +144,21 @@ public class Client {
 	/**
 	 * Retrieve messages for this client
 	 */
-	public JSONObject getMessages() {
-		JSONObject allMessages = new JSONObject();
-		JSONArray jsonDirectMessages = new JSONArray();
-		JSONArray jsonChatroomMessages = new JSONArray();
-
-		synchronized (chatroomMessages) {
-			for (MessageChatroom msg : chatroomMessages) {
-				if (msg.chatroom() == null || msg.chatroom().isEmpty()) {
-					// Direct messages: ["username", "message"]
-					JSONArray directMessage = new JSONArray();
-					directMessage.put(msg.username());
-					directMessage.put(msg.message());
-					jsonDirectMessages.put(directMessage);
-				} else {
-					// Chatroom messages: ["chatroom", "username", "message"]
-					JSONArray chatroomMessage = new JSONArray();
-					chatroomMessage.put(msg.chatroom());
-					chatroomMessage.put(msg.username());
-					chatroomMessage.put(msg.message());
-					jsonChatroomMessages.put(chatroomMessage);
-				}
+	public JSONArray getMessages() {
+		JSONArray jsonMessages = new JSONArray();
+		synchronized (messages) {
+			for (Message msg : messages) {
+				JSONObject jsonMsg = (new JSONObject())
+						.put("username", msg.username)
+						.put("message", msg.message);
+				jsonMessages.put(jsonMsg);
 			}
-			chatroomMessages.clear();
+			messages.clear();
 		}
-
-		allMessages.put("messages", jsonDirectMessages);
-		allMessages.put("chatrooms", jsonChatroomMessages);
 		updateLastUsage();
-		return allMessages;
+		return jsonMessages;
 	}
+
 
 
 	public void addChatroom(String chatroom) {
