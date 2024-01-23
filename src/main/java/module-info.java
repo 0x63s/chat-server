@@ -1,4 +1,4 @@
-module ch.fhnw.richards.chatserver {
+module chatroom.server {
     requires java.logging;
     requires jdk.httpserver;
     requires org.json;
